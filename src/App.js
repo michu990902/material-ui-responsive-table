@@ -1,6 +1,9 @@
 import './App.css';
 import Table from './components/Table/Table'
 
+import {useState} from 'react';
+import {Button, Box} from '@material-ui/core';
+
 const createData = (name, calories, fat, carbs, protein) => ({name, calories, fat, carbs, protein});
 const createData2 = (name, v1, v2) => ({name, v1, v2});
 
@@ -11,6 +14,7 @@ const headCells = [
     { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
     { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
 ];
+// ! ID = "name" required
 
 const headCells2 = [
     { id: 'name', numeric: false, disablePadding: true, label: 'Name (test)' },
@@ -42,12 +46,18 @@ const rows2 = [
 ];
 
 function App() {
-
+    const [toggleData, setToggleData] = useState(false);
     return (
         <div className="App">
+            <Box p={1}>
+                <Button variant="contained" color="primary" onClick={() => setToggleData(prev => !prev)}>
+                    Change data set
+                </Button>
+            </Box>
+            
             <Table 
-                headCells={headCells2}
-                rows={rows2}
+                headCells={toggleData ? headCells : headCells2}
+                rows={toggleData ? rows : rows2}
             />
         </div>
     );

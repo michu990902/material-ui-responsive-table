@@ -1,25 +1,31 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { lighten, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
+import clsx from 'clsx'
+import { lighten, makeStyles, withStyles } from '@material-ui/core/styles'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
+    TableSortLabel,
+    Toolbar,
+    Typography,
+    Paper,
+    Checkbox,
+    IconButton,
+    Tooltip,
+    FormControlLabel,
+    Switch
+} from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
+import FilterListIcon from '@material-ui/icons/FilterList'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ResponsiveViewSwitcher from '../ResponsiveViewSwitcher/ResponsiveViewSwitcher'
+import Select from '../Select/Select'
 
 
 const descendingComparator = (a, b, orderBy) => {
@@ -46,56 +52,106 @@ const stableSort = (array, comparator) => {
     return stabilizedThis.map((el) => el[0]);
 }
 
-function EnhancedTableHead({ classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells }) {
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+function EnhancedTableHead({ classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort, headCells, setOrder, setOrderBy }) {
+    const [selectedOrder, setSelectedOrder] = useState(0);
+    const sortButtons = headCells.reduce((res, curr) => [
+        ...res,
+        {
+            id: curr.id,
+            order: 'asc',
+            label: curr.label,
+            icon: <ArrowUpwardIcon />
+        },
+        {
+            id: curr.id,
+            order: 'desc',
+            label: curr.label,
+            icon: <ArrowDownwardIcon />
+        },
+    ], []);
 
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
+    const createSortHandler = (property) => (event) => {
+        onRequestSort(event, property);
+        const nr = sortButtons.findIndex(obj => obj.id === property && obj.order !== order);
+        setSelectedOrder(nr);
+    };
+
+    return (
+        <TableHead>
+            <TableRow>
+                <ResponsiveViewSwitcher
+                    fullScreen={<>
+                        <TableCell padding="checkbox">
+                            <Checkbox
+                                indeterminate={numSelected > 0 && numSelected < rowCount}
+                                checked={rowCount > 0 && numSelected === rowCount}
+                                onChange={onSelectAllClick}
+                                inputProps={{ 'aria-label': 'select all desserts' }}
+                            />
+                        </TableCell>
+                            {headCells.map((headCell) => (
+                            <TableCell
+                                key={headCell.id}
+                                align={headCell.numeric ? 'right' : 'left'}
+                                padding={headCell.disablePadding ? 'none' : 'default'}
+                                sortDirection={orderBy === headCell.id ? order : false}
+                            >
+                                <TableSortLabel
+                                    active={orderBy === headCell.id}
+                                    direction={orderBy === headCell.id ? order : 'asc'}
+                                    onClick={createSortHandler(headCell.id)}
+                                >
+                                {headCell.label}
+                                {orderBy === headCell.id ? (
+                                    <span className={classes.visuallyHidden}>
+                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    </span>
+                                ) : null}
+                                </TableSortLabel>
+                            </TableCell>
+                        ))}
+                    </>}
+                    middleScreen={<TableCell colSpan={2} align="center">
+                        <Select
+                            label="Sort"
+                            handleChange={ev => {
+                                const id = ev.target.value;
+                                setSelectedOrder(id);
+                                setOrder(sortButtons[id].order);
+                                setOrderBy(sortButtons[id].id);
+                            }}
+                            value={selectedOrder}
+                            values={sortButtons}
+                        />
+                    </TableCell>}
+                    smallScreen={<TableCell align="center">
+                        <Select
+                            label="Sort"
+                            handleChange={ev => {
+                                const id = ev.target.value;
+                                setSelectedOrder(id);
+                                setOrder(sortButtons[id].order);
+                                setOrderBy(sortButtons[id].id);
+                            }}
+                            value={selectedOrder}
+                            values={sortButtons}
+                        />
+                    </TableCell>}
+                />
+                
+            </TableRow>
+        </TableHead>
+    );
 }
 
 EnhancedTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired,
 };
 
 const useToolbarStyles = makeStyles((theme) => ({
@@ -133,6 +189,7 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} selected
         </Typography>
       ) : (
+        //   ! TODO remove
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
           Nutrition
         </Typography>
@@ -160,37 +217,66 @@ EnhancedTableToolbar.propTypes = {
 };
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  paper: {
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  table: {
-    minWidth: 750,
-  },
-  visuallyHidden: {
-    border: 0,
-    clip: 'rect(0 0 0 0)',
-    height: 1,
-    margin: -1,
-    overflow: 'hidden',
-    padding: 0,
-    position: 'absolute',
-    top: 20,
-    width: 1,
-  },
+    root: {
+        width: '100%',
+    },
+    paper: {
+        width: '100%',
+        marginBottom: theme.spacing(2),
+    },
+    table: {
+        minWidth: 300,
+    },
+    visuallyHidden: {
+        border: 0,
+        clip: 'rect(0 0 0 0)',
+        height: 1,
+        margin: -1,
+        overflow: 'hidden',
+        padding: 0,
+        position: 'absolute',
+        top: 20,
+        width: 1,
+    },
+    tableCell:{
+        borderWidth: 0,
+        verticalAlign: 'top',
+    },
 }));
+
+const splitData = (arr, splitSize) => {
+    let ss = splitSize+1;
+    let tmp = [];
+    for(let i = 0; i < arr.length; i++) {
+        if(ss > 1){
+            let pos = tmp.length-1;
+            if (pos < 0) pos = 0;
+            tmp[pos] = [...(tmp[pos]||[]), arr[i]];
+            ss--;
+        }else{
+            tmp.push([arr[i]])
+            ss = splitSize;
+        }
+    }
+    return tmp;
+};
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  },
+}))(TableRow);
 
 export default function EnhancedTable({headCells, rows}) {
     const classes = useStyles();
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
-    const [selected, setSelected] = React.useState([]);
-    const [page, setPage] = React.useState(0);
-    const [dense, setDense] = React.useState(false);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('name');
+    const [selected, setSelected] = useState([]);
+    const [page, setPage] = useState(0);
+    const [dense, setDense] = useState(false);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -244,6 +330,8 @@ export default function EnhancedTable({headCells, rows}) {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+    const splitHeadCells = splitData(headCells, 2);
+
     return (
         <div className={classes.root}>
         <Paper className={classes.paper}>
@@ -262,6 +350,8 @@ export default function EnhancedTable({headCells, rows}) {
                     orderBy={orderBy}
                     onSelectAllClick={handleSelectAllClick}
                     onRequestSort={handleRequestSort}
+                    setOrderBy={setOrderBy}
+                    setOrder={setOrder}
                     rowCount={rows.length}
                     headCells={headCells}
                 />
@@ -273,32 +363,74 @@ export default function EnhancedTable({headCells, rows}) {
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
-                        <TableRow
+                        <StyledTableRow
                             hover
-                            onClick={(event) => handleClick(event, row.name)}
+                            // onClick={(event) => handleClick(event, row.name)}
                             role="checkbox"
                             aria-checked={isItemSelected}
                             tabIndex={-1}
                             key={row.name}
                             selected={isItemSelected}
                         >
-                            <TableCell padding="checkbox">
-                                <Checkbox
-                                checked={isItemSelected}
-                                inputProps={{ 'aria-labelledby': labelId }}
-                                />
-                            </TableCell>
-                            {headCells.map((cell, cellId) => (
-                                cellId
-                                ? <TableCell align="right">{row[cell.id]}</TableCell>
-                                : <TableCell component="th" id={labelId} scope="row" padding="none">{row[cell.id]}</TableCell>
-                            ))}
-                        </TableRow>
+                            <ResponsiveViewSwitcher
+                                fullScreen={
+                                    <>
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                checked={isItemSelected}
+                                                inputProps={{ 'aria-labelledby': labelId }}
+                                            />
+                                        </TableCell>
+                                        {headCells.map((cell, cellId) => (
+                                            cellId
+                                            ? <TableCell align="right" key={`${index}-${cell.id}`}>{row[cell.id]}</TableCell>
+                                            : <TableCell component="th" id={labelId} scope="row" padding="none" key={`${index}-${cellId}`}>{row[cell.id]}</TableCell>
+                                        ))}
+                                    </>
+                                }
+                                middleScreen={
+                                    <TableCell padding="none">
+                                        <Table size="small">
+                                            <colgroup>
+                                                <col width="25%" />
+                                                <col width="25%" />
+                                                <col width="25%" />
+                                                <col width="25%" />
+                                            </colgroup>
+                                            <TableBody>
+                                                {splitHeadCells.map(cell => (
+                                                    <TableRow key={`${index}-${cell[0].id}`}>
+                                                        <TableCell variant="head" className={classes.tableCell}>{cell[0].label}</TableCell>
+                                                        <TableCell className={classes.tableCell} align="right">{row[cell[0].id]}</TableCell>
+                                                        <TableCell variant="head" className={classes.tableCell}>{cell[1] ? cell[1].label : null}</TableCell>
+                                                        <TableCell className={classes.tableCell} align="right">{cell[1] ? row[cell[1].id] : null}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableCell>
+                                }
+                                smallScreen={
+                                    <TableCell padding="none">
+                                        <Table size="small">
+                                            <TableBody>
+                                                {headCells.map(cell => (
+                                                    <TableRow key={`${index}-${cell.id}`}>
+                                                        <TableCell variant="head" className={classes.tableCell}>{cell.label}</TableCell>
+                                                        <TableCell align="right" className={classes.tableCell}>{row[cell.id]}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableCell>
+                                }
+                            />
+                        </StyledTableRow>
                     );
                     })}
                 {emptyRows > 0 && (
                     <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                        <TableCell colSpan={6} />
+                        <TableCell colSpan={headCells.length} />
                     </TableRow>
                 )}
                 </TableBody>
