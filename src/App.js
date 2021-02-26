@@ -1,8 +1,14 @@
-import './App.css';
+import './App.css'
 import Table from './components/Table/Table'
 
-import {useState} from 'react';
-import {Button, Box} from '@material-ui/core';
+import {useState} from 'react'
+import {Button, Box} from '@material-ui/core'
+
+import AccessAlarmIcon from '@material-ui/icons/AccessAlarm'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance'
+import AddAlertIcon from '@material-ui/icons/AddAlert'
+import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate'
 
 const createData = (name, calories, fat, carbs, protein) => ({name, calories, fat, carbs, protein});
 const createData2 = (name, v1, v2) => ({name, v1, v2});
@@ -17,9 +23,31 @@ const headCells = [
 // ! ID = "name" required
 
 const headCells2 = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Name (test)' },
-    { id: 'v1', numeric: true, disablePadding: false, label: 'Value 1 (test)' },
-    { id: 'v2', numeric: true, disablePadding: false, label: 'Value 2 (test)' },
+    { 
+        id: 'name',
+        numeric: false,
+        disablePadding: true,
+        label: 'Name (test)'
+    },
+    { 
+        id: 'v1',
+        numeric: true,
+        disablePadding: false,
+        label: 'Value 1 (test)'
+    },
+    { 
+        id: 'v2',
+        numeric: true,
+        disablePadding: false,
+        label: 'Value 2 (test)',
+        mapValues: {
+            1: <AccessAlarmIcon/>,
+            2: <AccountCircleIcon/>,
+            3: <AccountBalanceIcon/>,
+            4: <AddAlertIcon/>,
+            5: <AddPhotoAlternateIcon/>,
+        },
+    },
 ];
 
 const rows = [

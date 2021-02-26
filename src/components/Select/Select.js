@@ -8,15 +8,25 @@ import {
     ListItemIcon
 } from '@material-ui/core'
 
-const StyledSelect = ({ value, handleChange, label, values}) => {
+const StyledSelect = ({ name, value, handleChange, label, values}) => {
     return (
-        <FormControl variant="filled" fullWidth>
+        <FormControl variant="outlined" fullWidth>
             <InputLabel id="select-outlined-label">{label}</InputLabel>
             <Select
                 labelId="select-outlined-label"
                 id="select-outlined"
                 value={value}
                 onChange={handleChange}
+                label={label}
+                inputProps={{
+                    name,
+                    id: 'select-outlined-label',
+                }}
+                SelectDisplayProps={{ style: { 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}}
             >
                 {values.map((item, id) => <MenuItem key={id} value={id}>
                         {item.icon && (
