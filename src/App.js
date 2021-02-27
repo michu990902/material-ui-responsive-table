@@ -1,8 +1,7 @@
 import './App.css'
-import Table from './components/Table/Table'
 
-import {useState} from 'react'
-import {Button, Box} from '@material-ui/core'
+import { useState } from 'react'
+import { Button, Box } from '@material-ui/core'
 
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
@@ -10,36 +9,56 @@ import AccountBalanceIcon from '@material-ui/icons/AccountBalance'
 import AddAlertIcon from '@material-ui/icons/AddAlert'
 import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate'
 
+import Table from './components/Table/Table'
+
 const createData = (name, calories, fat, carbs, protein) => ({name, calories, fat, carbs, protein});
 const createData2 = (name, v1, v2) => ({name, v1, v2});
 
-const headCells = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-    { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-    { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-    { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-    { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
-];
 // ! ID = "name" required
 
-const headCells2 = [
-    { 
+const columns1 = [
+    {
         id: 'name',
-        numeric: false,
-        disablePadding: true,
-        label: 'Name (test)'
+        type: 'string', //bool, number, string
+        label: 'Dessert (100g serving)',
     },
-    { 
+    {
+        id: 'calories',
+        type: 'number',
+        label: 'Calories',
+    },
+    {
+        id: 'fat',
+        type: 'number',
+        label: 'Fat (g)',
+    },
+    {
+        id: 'carbs',
+        type: 'number',
+        label: 'Carbs (g)',
+    },
+    {
+        id: 'protein',
+        type: 'number',
+        label: 'Protein (g)',
+    },
+];
+
+const columns2 = [
+    {
+        id: 'name',
+        type: 'string', //bool, number, string
+        label: 'Name',
+    },
+    {
         id: 'v1',
-        numeric: true,
-        disablePadding: false,
-        label: 'Value 1 (test)'
+        type: 'number',
+        label: 'Value 1',
     },
-    { 
+    {
         id: 'v2',
-        numeric: true,
-        disablePadding: false,
-        label: 'Value 2 (test)',
+        type: 'number',
+        label: 'Value 2',
         mapValues: {
             1: <AccessAlarmIcon/>,
             2: <AccountCircleIcon/>,
@@ -50,7 +69,7 @@ const headCells2 = [
     },
 ];
 
-const rows = [
+const rows1 = [
   createData('Cupcake', 305, 3.7, 67, 4.3),
   createData('Donut', 452, 25.0, 51, 4.9),
   createData('Eclair', 262, 16.0, 24, 6.0),
@@ -82,10 +101,10 @@ function App() {
                     Change data set
                 </Button>
             </Box>
-            
-            <Table 
-                headCells={toggleData ? headCells : headCells2}
-                rows={toggleData ? rows : rows2}
+            <Table
+                title="Test Table"
+                columns={toggleData ? columns1 : columns2}
+                rows={toggleData ? rows1 : rows2}
             />
         </div>
     );
