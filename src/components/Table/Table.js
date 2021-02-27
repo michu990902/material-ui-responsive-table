@@ -14,6 +14,9 @@ import { makeStyles } from '@material-ui/core/styles'
 import TableHeader from './TableHeader'
 import TableBody from './TableBody'
 
+import { createFilter, applyFilters } from '../../utils/filter'
+import FilterDialog from './FilterDialog'
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -60,28 +63,36 @@ const useStyles = makeStyles(theme => ({
 
 const ResponsiveTable = ({ title, columns, rows }) => {
     const classes = useStyles(); 
-    const [filters, setFilters] = useState([
-        {
-            fieldName: "Name",
-            condition: "contains",
-            value: "Test"
-        },
-        {
-            fieldName: "Value 1",
-            condition: "equal",
-            value: "1"
-        },
-    ]);
+    const [filters, setFilters] = useState([]);
     const [filteredRows, setFilteredRows] = useState([]);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('name');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [alertVisibility, setAlertVisibility] = useState(false);
 
     useEffect(() => {
-        // ! TODO filter
-        setFilteredRows(rows);
-    }, [rows]);
+        setFilteredRows(applyFilters(rows, filters));
+    }, [filters]);
+
+    const addFilter = (id, label, type, condition, conditionLabel, value) => {
+        setFilters(prev => [...prev, {
+            id,
+            label,
+            type,
+            condition,
+            conditionLabel,
+            value,
+            validateFunction: createFilter(type, condition, value)
+        }]);
+    };
+
+    const deleteFilter = idToDelete => {
+        setFilters(prev => prev.filter((val, id) => id !== idToDelete));
+    };
+
+    const openAlert = () => setAlertVisibility(true);
+    const closeAlert = () => setAlertVisibility(false);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -100,6 +111,12 @@ const ResponsiveTable = ({ title, columns, rows }) => {
 
     return (
         <div className={classes.root}>
+            <FilterDialog
+                isOpen={alertVisibility}
+                handleClose={closeAlert}
+                columns={columns}
+                addFilter={addFilter}
+            />
             <Toolbar disableGutters> 
                 <Typography id="tableTitle" className={classes.title} variant="h6" noWrap> 
                     {title}
@@ -108,9 +125,9 @@ const ResponsiveTable = ({ title, columns, rows }) => {
                     variant="contained"
                     size="large"
                     startIcon={<FilterListIcon />}
-                    onClick={() => {}}
+                    onClick={openAlert}
                 >
-                    Filter
+                    Add Filter
                 </Button>
             </Toolbar>
             <Paper className={classes.paper}>
@@ -119,8 +136,8 @@ const ResponsiveTable = ({ title, columns, rows }) => {
                         {filters.map((filter, id) => (
                             <li key={id}>
                                 <Chip
-                                    label={`"${filter.fieldName}" ${filter.condition} "${filter.value}"`}
-                                    onDelete={() => {}}
+                                    label={`"${filter.label}" ${filter.conditionLabel} "${filter.value}"`}
+                                    onDelete={() => deleteFilter(id)}
                                     className={classes.chip}
                                 />
                             </li>

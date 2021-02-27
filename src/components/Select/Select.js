@@ -13,14 +13,14 @@ const StyledSelect = ({ name, value, handleChange, label, values}) => {
         <FormControl variant="outlined" fullWidth>
             <InputLabel id="select-outlined-label">{label}</InputLabel>
             <Select
-                labelId="select-outlined-label"
-                id="select-outlined"
+                labelId={`select-outlined-label-${name}`}
+                id={`select-outlined-${name}`}
                 value={value}
                 onChange={handleChange}
                 label={label}
                 inputProps={{
                     name,
-                    id: 'select-outlined-label',
+                    id: `select-outlined-label-${name}`,
                 }}
                 SelectDisplayProps={{ style: { 
                     display: 'flex',
@@ -28,7 +28,7 @@ const StyledSelect = ({ name, value, handleChange, label, values}) => {
                     alignItems: 'center'
                 }}}
             >
-                {values.map((item, id) => <MenuItem key={id} value={id}>
+                {values.map((item, id) => <MenuItem key={id} value={item.value ? item.value : item.id}>
                         {item.icon && (
                             <ListItemIcon style={{minWidth: 40}}>
                                 {item.icon}

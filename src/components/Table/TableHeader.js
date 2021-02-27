@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {
     TableSortLabel,
@@ -12,16 +12,17 @@ import ResponsiveViewSwitcher from '../ResponsiveViewSwitcher/ResponsiveViewSwit
 import Select from '../Select/Select'
 
 const TableHeader = ({ classes, order, orderBy,  onRequestSort, columns, setOrder, setOrderBy }) => {
-    const [selectedOrder, setSelectedOrder] = useState(0);
     const sortButtons = columns.reduce((res, curr) => [
         ...res,
         {
+            value: `${curr.id}-asc`,
             id: curr.id,
             order: 'asc',
             label: curr.label,
             icon: <ArrowUpwardIcon />
         },
         {
+            value: `${curr.id}-desc`,
             id: curr.id,
             order: 'desc',
             label: curr.label,
@@ -32,8 +33,13 @@ const TableHeader = ({ classes, order, orderBy,  onRequestSort, columns, setOrde
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
         const nr = sortButtons.findIndex(obj => obj.id === property && obj.order !== order);
-        setSelectedOrder(nr);
     };
+
+    const handleSort = ev => {
+        const el = sortButtons.find(item => item.value === ev.target.value);
+        setOrder(el.order);
+        setOrderBy(el.id);
+    }
 
     return (
         <TableHead>
@@ -64,26 +70,16 @@ const TableHeader = ({ classes, order, orderBy,  onRequestSort, columns, setOrde
                     middleScreen={<TableCell colSpan={2} align="center">
                         <Select
                             label="Sort"
-                            handleChange={ev => {
-                                const id = ev.target.value;
-                                setSelectedOrder(id);
-                                setOrder(sortButtons[id].order);
-                                setOrderBy(sortButtons[id].id);
-                            }}
-                            value={selectedOrder}
+                            handleChange={handleSort}
+                            value={`${orderBy}-${order}`}
                             values={sortButtons}
                         />
                     </TableCell>}
                     smallScreen={<TableCell align="center">
                         <Select
                             label="Sort"
-                            handleChange={ev => {
-                                const id = ev.target.value;
-                                setSelectedOrder(id);
-                                setOrder(sortButtons[id].order);
-                                setOrderBy(sortButtons[id].id);
-                            }}
-                            value={selectedOrder}
+                            handleChange={handleSort}
+                            value={`${orderBy}-${order}`}
                             values={sortButtons}
                         />
                     </TableCell>}

@@ -19,7 +19,7 @@ const createData2 = (name, v1, v2) => ({name, v1, v2});
 const columns1 = [
     {
         id: 'name',
-        type: 'string', //bool, number, string
+        type: 'string', //bool, number, string, date
         label: 'Dessert (100g serving)',
     },
     {
@@ -47,7 +47,7 @@ const columns1 = [
 const columns2 = [
     {
         id: 'name',
-        type: 'string', //bool, number, string
+        type: 'string', //bool, number, string, date
         label: 'Name',
     },
     {
