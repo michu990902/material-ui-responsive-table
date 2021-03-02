@@ -8,6 +8,11 @@
 ## Smartphone
 ![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/3.png)
 
+## Filters
+- Automatically generated based on the column data type
+![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/4.png)
+![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/5.png)
+
 ## How to use
 ```javascript
 import Table from './components/Table/Table'
