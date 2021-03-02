@@ -1,4 +1,4 @@
-# Material-UI Responsive table
+# Material-UI Responsive Table
 ## PC
 ![Table on PC](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/1.png)
 
@@ -9,9 +9,10 @@
 ![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/3.png)
 
 ## Filters
-- Automatically generated based on the column data type
-![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/4.png)
+**Automatically generated** based on the *column data type*
+
 ![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/5.png)
+![Table on smartphone](https://raw.githubusercontent.com/michu990902/material-ui-responsive-table/master/screenshots/4.png)
 
 ## How to use
 ```javascript
